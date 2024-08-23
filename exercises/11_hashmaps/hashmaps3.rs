@@ -17,7 +17,7 @@ struct Team {
 
 fn build_scores_table(results: &str) -> HashMap<&str, Team> {
     // The name of the team is the key and its associated struct is the value.
-    let mut scores = HashMap::new();
+    let mut scores: HashMap<&str, Team> = HashMap::new();
 
     for line in results.lines() {
         let mut split_iterator = line.split(',');
@@ -31,6 +31,38 @@ fn build_scores_table(results: &str) -> HashMap<&str, Team> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+
+        match scores.get_mut(team_1_name) {
+            Some(game) => {
+                game.goals_scored += team_1_score;
+                game.goals_conceded += team_2_score;
+            }
+            None => {
+                scores.insert(
+                    team_1_name,
+                    Team {
+                        goals_scored: team_1_score,
+                        goals_conceded: team_2_score,
+                    },
+                );
+            }
+        }
+
+        match scores.get_mut(team_2_name) {
+            Some(game) => {
+                game.goals_scored += team_2_score;
+                game.goals_conceded += team_1_score;
+            }
+            None => {
+                scores.insert(
+                    team_2_name,
+                    Team {
+                        goals_scored: team_2_score,
+                        goals_conceded: team_1_score,
+                    },
+                );
+            }
+        }
     }
 
     scores
@@ -38,6 +70,19 @@ fn build_scores_table(results: &str) -> HashMap<&str, Team> {
 
 fn main() {
     // You can optionally experiment here.
+    const RESULTS: &str = "England,France,4,2
+France,Italy,3,1
+Poland,Spain,2,0
+Germany,England,2,1
+England,Spain,1,0";
+
+    let scores = build_scores_table(RESULTS);
+    for (team_name, team) in scores.iter() {
+        println!(
+            "{}: goals scored: {}, goals conceded: {}",
+            team_name, team.goals_scored, team.goals_conceded
+        );
+    }
 }
 
 #[cfg(test)]
