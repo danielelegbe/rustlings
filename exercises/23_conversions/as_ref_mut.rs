@@ -2,26 +2,44 @@
 // about them at https://doc.rust-lang.org/std/convert/trait.AsRef.html and
 // https://doc.rust-lang.org/std/convert/trait.AsMut.html, respectively.
 
+use std::convert::AsMut;
+
 // Obtain the number of bytes (not characters) in the given argument.
 // TODO: Add the `AsRef` trait appropriately as a trait bound.
-fn byte_counter<T>(arg: T) -> usize {
+fn byte_counter<T>(arg: T) -> usize
+where
+    T: AsRef<str>,
+{
     arg.as_ref().as_bytes().len()
 }
 
 // Obtain the number of characters (not bytes) in the given argument.
 // TODO: Add the `AsRef` trait appropriately as a trait bound.
-fn char_counter<T>(arg: T) -> usize {
+fn char_counter<T>(arg: T) -> usize
+where
+    T: AsRef<str>,
+{
     arg.as_ref().chars().count()
 }
 
 // Squares a number using `as_mut()`.
 // TODO: Add the appropriate trait bound.
-fn num_sq<T>(arg: &mut T) {
-    // TODO: Implement the function body.
+fn num_sq<T>(arg: &mut T)
+where
+    T: AsMut<u32>,
+{
+    let num = arg.as_mut();
+    *num = *num * *num;
 }
 
 fn main() {
     // You can optionally experiment here.
+    let mut num = Box::new(3);
+
+    dbg!(&num);
+
+    num_sq(&mut num);
+    dbg!(&num);
 }
 
 #[cfg(test)]
